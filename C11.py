@@ -52,9 +52,6 @@ input = 2*(np.random.rand(dim) > 0.5)-1
 
 plot_states([input], 'Random/corrupted input', block=False)
 
-
-
-
 #  asynchronous stochastic vs. deterministic
 model.run_async(input, eps=5, rows=2, row=1, trace=True)
 model.run_async(input, eps=5, rows=2, row=2, beta_s=0.1, beta_f=10, trace=True)
