@@ -9,7 +9,6 @@ from util import *
 eps_hard_limit = 100
 
 
-
 class Hopfield():
 
     def __init__(self, dim):
@@ -51,8 +50,8 @@ class Hopfield():
             return -1 if not np.sign(net) else np.sign(net)   # FIXME
         else:
             # Stochastic transition (Output for each neuron is either -1 or 1!)
-            prob = 1/(1+np.exp(-self.beta*net))                   # FIXME
-            return -1 if np.random.rand() >= prob else 1  # FIXME
+            prob = 1/(1 + np.exp(-self.beta*net))                   # FIXME
+            return -1 if np.random.rand() >= prob else 1          # FIXME
 
 
     # synchronous dynamics (not implemented, not part of the exercise)
@@ -64,15 +63,15 @@ class Hopfield():
 
         if self.beta is None:
             # Deterministic transition
-            return np.zeros(self.dim)
+            return np.sign(net) - (net == 0) # if net[i] == 0, be negative 
         else:
             # Stochastic transition (Output for each neuron is either -1 or 1!)
-            prob = 0
-            return np.zeros(self.dim)
+            prob = 1/(1 + np.exp(-self.beta*net))
+            return 2*(prob >= np.random.rand(self.dim))-1
 
 
     # not implemented properly, modify for correct functioning (not part of the exercise)
-    def run_sync(self, x):
+    def run_sync(self, x, beta_s=None, beta_f=None, row=1, rows=1, trace=False):
         '''
         Run model in synchronous dynamics. One input vector x will produce
         series of outputs (states) s_t.
@@ -82,7 +81,19 @@ class Hopfield():
         S = [s]
         E = [e]
 
-        for t in range(eps_hard_limit): # "enless" loop
+        title = 'Running: synchronous {}'.format('stochastic' if beta_s is not None else 'deterministic')
+
+        for ep in range(eps_hard_limit): # "enless" loop
+            ## Set beta for this episode
+            if beta_s is None:
+                # Deterministic -> no beta
+                self.beta = None
+                print('Ep {:2d}/{:2d}:  deterministic'.format(ep+1, eps_hard_limit))
+            else:
+                # Stochastic -> schedule for beta (or temperature)
+                self.beta = beta_s * ( (beta_f/beta_s) ** (ep/(eps_hard_limit-1)))
+                print('Ep {:2d}/{:2d}:  stochastic, beta = 1/T = {:7.4f}'.format(ep+1, eps_hard_limit, self.beta))
+
             ## Compute new state for all neurons
             s = self.forward_all_neurons(s)
             e = self.energy(s)
@@ -90,9 +101,19 @@ class Hopfield():
             S.append(s)
             E.append(e)
 
+            if trace:
+                plot_state(s, energys=E, max_eps=eps_hard_limit*self.dim, row=row, rows=rows, title=title, block=False)
+                redraw()
+
+
             ## Detect termination criterion
             # if [fixed point is reached] or [cycle is reached]:
             #     return S, E
+
+        if not trace:
+            plot_state(s, energys=E, index=None, max_eps=eps*self.dim, row=row, rows=rows, title=title, block=True)
+
+        print('Final state energy = {:.2f}'.format(self.energy(s)))
 
         return S, E # if eps run out
 

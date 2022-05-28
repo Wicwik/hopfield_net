@@ -12,8 +12,8 @@ from util import *
 
 ## 1. Load data
 
-# dataset = 'small.txt'
-dataset = 'medium.txt'
+dataset = 'small.txt'
+# dataset = 'medium.txt'
 
 patterns, dim = prepare_data(dataset)
 
@@ -51,6 +51,10 @@ input = 2*(np.random.rand(dim) > 0.5)-1
 ## 5. Run the model
 
 plot_states([input], 'Random/corrupted input', block=False)
+
+#  synchronous stochastic vs. deterministic
+model.run_sync(input, rows=2, row=1, trace=True)
+model.run_sync(input, rows=2, row=2, beta_s=0.1, beta_f=10, trace=True)
 
 #  asynchronous stochastic vs. deterministic
 model.run_async(input, eps=5, rows=2, row=1, trace=True)
