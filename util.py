@@ -1,5 +1,6 @@
 # Neural Networks (2-AIN-132/15), FMFI UK BA
 # (c) Tomas Kuzma, Juraj Holas, Peter Gergel, Endre Hamerlik, Štefan Pócoš, Iveta Bečková 2017-2022
+# Edited by Robert Belanec for third project purposes
 
 import matplotlib
 matplotlib.use('TkAgg') # fixme if plotting doesn`t work (try 'Qt5Agg' or 'Qt4Agg')
@@ -16,7 +17,7 @@ import functools
 
 ## Utilities
 
-def prepare_data(filename):
+def prepare_data_from_chars(filename):
     patterns = []
     with open(filename) as f:
         count, width, height = [int(x) for x in f.readline().split()] # header
@@ -32,6 +33,26 @@ def prepare_data(filename):
     util_setup(width, height)
     return patterns, dim
 
+def prepare_data_from_nums(filename):
+    patterns = []
+    with open(filename) as f:
+        count = int(f.readline().strip())
+        width, height = [int(x) for x in f.readline().split()]
+        dim = width*height
+       
+        for _ in range(count):   
+            x = np.empty((width, height))
+            for r in range(width):
+                arr = np.array(list(f.readline().strip().split()))
+                print(arr)
+                x[r,:] = arr
+
+            patterns.append(2*x.flatten()-1)
+            f.readline() 
+
+        util_setup(height, width)
+        return patterns, dim
+ 
 def vector(array, row_vector=False):
     '''
     Construts a column vector (i.e. matrix of shape (n,1)) from given array/numpy.ndarray, or row

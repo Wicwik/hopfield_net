@@ -12,12 +12,12 @@ from util import *
 
 ## 1. Load data
 
-dataset = 'small.txt'
+# dataset = 'small.txt'
 # dataset = 'medium.txt'
+# patterns, dim = prepare_data_from_chars(dataset)
 
-patterns, dim = prepare_data(dataset)
-
-
+dataset = 'letters.txt'
+patterns, dim = prepare_data_from_nums(dataset)
 
 # 2. Select a subset of patterns (optional)
 
