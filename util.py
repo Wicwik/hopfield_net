@@ -37,20 +37,19 @@ def prepare_data_from_nums(filename):
     patterns = []
     with open(filename) as f:
         count = int(f.readline().strip())
-        width, height = [int(x) for x in f.readline().split()]
+        height, width = [int(x) for x in f.readline().split()]
         dim = width*height
        
         for _ in range(count):   
-            x = np.empty((width, height))
-            for r in range(width):
+            x = np.empty((height, width))
+            for r in range(height):
                 arr = np.array(list(f.readline().strip().split()))
-                print(arr)
                 x[r,:] = arr
 
-            patterns.append(2*x.flatten()-1)
+            patterns.append(x.flatten())
             f.readline() 
 
-        util_setup(height, width)
+        util_setup(width, height)
         return patterns, dim
  
 def vector(array, row_vector=False):
