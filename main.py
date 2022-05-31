@@ -33,6 +33,7 @@ def noise_correcting_test(model, ks, patterns, dim, names, show_steps=5):
     for p_idx, pattern in enumerate(patterns):
         print('Corrupting pattern {}'.format(names[p_idx]))
 
+        # construct nice plots
         fig = plt.figure(99, figsize=(16, 8))
         X = [ (1,2,1), (2,4,3), (2,4,4), (2,4,7), (2,4,8) ]
         axes = []
@@ -72,6 +73,9 @@ def noise_correcting_test(model, ks, patterns, dim, names, show_steps=5):
 
 
 def network_dynamics_test(model, n_patterns, n_most_common=10, plot=True):
+    '''
+    Run network for n random patterns to reconstruct learned patterns
+    '''
     model.reset_stats()
 
     input_patterns = 2*(np.random.rand(n_patterns, dim) > 0.5)-1
@@ -90,16 +94,23 @@ def network_dynamics_test(model, n_patterns, n_most_common=10, plot=True):
 
 
 def more_patterns_test(n_train_patterns, n_generated_patterns, dynamics_plot=True):
+    '''
+    Load 8 patterns dataset and run dynamics test for 1 to 8 different patterns
+    '''
     recall_success_rates = []
 
     for n in n_train_patterns:
         dataset = 'letters_large.txt'
         patterns, dim = prepare_data_from_nums(dataset)
+
+        if n == 0:
+            plot_states(patterns, 'Training patterns - large dataset')
+
         patterns = patterns[:n]
 
         print('Training on {} pattern/s:'.format(n))
 
-        if plot:
+        if dynamics_plot:
             plot_states(patterns, 'Training patterns - large dataset')
 
         model = Hopfield(dim)
@@ -118,25 +129,21 @@ def more_patterns_test(n_train_patterns, n_generated_patterns, dynamics_plot=Tru
 
 
 ## Load data
-
-# dataset = 'small.txt'
-# dataset = 'medium.txt'
-# patterns, dim = prepare_data_from_chars(dataset)
-
 dataset = 'letters.txt'
 patterns, dim = prepare_data_from_nums(dataset)
-
-## Train the model
+names = ['X', 'H', 'O', 'Z']
 
 # Plot input patterns (comment out when it starts to annoy you)
 plot_states(patterns, 'Training patterns - normal dataset')
 
+
+## Train the model
 model = Hopfield(dim)
 model.train(patterns)
 
-# 4. Test model
-# ks = [0, 7, 14, 21]
-# noise_correcting_test(model, ks, patterns, dim, ['X', 'H', 'O', 'Z'])
+# Test model
+ks = [0, 7, 14, 21]
+noise_correcting_test(model, ks, patterns, dim, names)
 
 n_generated_patterns = 10000
 network_dynamics_test(model, n_generated_patterns)
