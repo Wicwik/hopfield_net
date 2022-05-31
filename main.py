@@ -68,6 +68,7 @@ def noise_correcting_test(model, ks, patterns, dim, names, show_steps=5):
 
                 axes[o_idx+1].plot(overlap)
                 axes[o_idx+1].set_title('Overlap with {}'.format(names[o_idx]))
+                axes[o_idx+1].set_ylim([-10,110])
 
         plt.show()
 
@@ -99,11 +100,12 @@ def more_patterns_test(n_train_patterns, n_generated_patterns, dynamics_plot=Tru
     '''
     recall_success_rates = []
 
-    for n in n_train_patterns:
+
+    for idx, n in enumerate(n_train_patterns):
         dataset = 'letters_large.txt'
         patterns, dim = prepare_data_from_nums(dataset)
 
-        if n == 0:
+        if idx == 0:
             plot_states(patterns, 'Training patterns - large dataset')
 
         patterns = patterns[:n]
@@ -111,7 +113,7 @@ def more_patterns_test(n_train_patterns, n_generated_patterns, dynamics_plot=Tru
         print('Training on {} pattern/s:'.format(n))
 
         if dynamics_plot:
-            plot_states(patterns, 'Training patterns - large dataset')
+            plot_states(patterns, 'Current training patterns')
 
         model = Hopfield(dim)
         model.train(patterns)
