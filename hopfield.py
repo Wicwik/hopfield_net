@@ -120,7 +120,10 @@ class Hopfield():
         Check if state or inverted state is equal to one of the patterns
         '''
         for p in self.patterns:
-            return np.array_equal(p, s) or np.array_equal(p, s*-1)
+            if np.array_equal(p, s) or np.array_equal(p, s*-1):
+                return True
+                
+        return False
 
     def contains_even_length_cycle(self, S):
         '''

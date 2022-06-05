@@ -45,7 +45,7 @@ def noise_correcting_test(model, ks, patterns, dim, names, show_steps=5):
 
         for k in ks:
             input_pattern = pattern.copy()
-            ind = np.random.choice(dim, k) 
+            ind = np.random.choice(dim, k, replace=False) 
             input_pattern[ind] *= -1 
 
             S, E = model.run_sync(input_pattern)
